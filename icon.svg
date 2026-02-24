@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512">
+  <rect width="512" height="512" rx="108" fill="#0A0A0A"/>
+  <circle cx="256" cy="230" r="120" fill="#F7931A"/>
+  <text x="256" y="265" text-anchor="middle" fill="white" font-size="140" font-weight="700" font-family="Arial">₿</text>
+  <text x="256" y="440" text-anchor="middle" fill="#008751" font-size="60" font-weight="700" font-family="Arial">₦ NGN</text>
+</svg>
