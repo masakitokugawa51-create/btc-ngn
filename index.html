@@ -30,8 +30,8 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
   
-  <!-- AdSense - REPLACE ca-pub-XXXXXXXXXXXXXXXX with your publisher ID after approval -->
-  <!-- <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXXXXXXXX" crossorigin="anonymous"></script> -->
+  <!-- AdSense -->
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9202142689270811" crossorigin="anonymous"></script>
 
   <style>
     :root {
@@ -163,7 +163,15 @@
 <body>
 <div class="app">
   <!-- Top Ad -->
-  <div class="ad-slot" id="adTop"><span>Ad</span></div>
+  <div class="ad-slot" id="adTop">
+    <ins class="adsbygoogle"
+      style="display:block"
+      data-ad-client="ca-pub-9202142689270811"
+      data-ad-slot="auto"
+      data-ad-format="auto"
+      data-full-width-responsive="true"></ins>
+    <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+  </div>
 
   <!-- Rate Bar -->
   <div class="rate-bar">
@@ -192,7 +200,15 @@
   </div>
 
   <!-- Mid Ad -->
-  <div class="ad-slot" id="adMid"><span>Ad</span></div>
+  <div class="ad-slot" id="adMid">
+    <ins class="adsbygoogle"
+      style="display:block"
+      data-ad-client="ca-pub-9202142689270811"
+      data-ad-slot="auto"
+      data-ad-format="auto"
+      data-full-width-responsive="true"></ins>
+    <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+  </div>
 
   <!-- Numpad -->
   <div class="numpad" id="numpad">
@@ -226,7 +242,7 @@
     </div>
   </div>
 
-  <!-- SEO: visible to both users and crawlers (FIX #2: no hidden text penalty) -->
+  <!-- SEO Footer -->
   <div class="seo-footer">
     <h2>Bitcoin to Naira Converter</h2>
     <p>Free BTC to NGN calculator with live exchange rates. Data from CoinGecko, updated every 15 seconds. Works offline.</p>
@@ -239,7 +255,7 @@
 </script>
 
 <script>
-// ═══ FORCE CLEAR OLD CACHES ON LOAD (FIX: old paywall cache) ═══
+// ═══ FORCE CLEAR OLD CACHES ═══
 if ('caches' in window) {
   caches.keys().then(function(names) {
     for (var i = 0; i < names.length; i++) {
@@ -268,10 +284,10 @@ var rateValueEl = document.getElementById('rateValue');
 var changeBadge = document.getElementById('changeBadge');
 var footerText = document.getElementById('footerText');
 
-// ═══ FALLBACK RATE (FIX #1: never show Loading forever) ═══
+// ═══ FALLBACK RATE ═══
 var FALLBACK_RATE = 87000000;
 
-// ═══ FETCH RATE (FIX #5: 429 rate limit handling) ═══
+// ═══ FETCH RATE ═══
 function fetchRate() {
   fetch('https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=ngn&include_24hr_change=true&include_last_updated_at=true')
     .then(function(r) {
@@ -293,7 +309,6 @@ function fetchRate() {
       updateUI();
     })
     .catch(function() {
-      // Try cache
       try {
         var c = localStorage.getItem('btc_ngn');
         if (c) {
@@ -303,7 +318,6 @@ function fetchRate() {
           return;
         }
       } catch(e) {}
-      // FIX #1: Fallback rate if nothing else works
       if (rate === 0) {
         rate = FALLBACK_RATE;
         change24h = 0;
@@ -321,7 +335,6 @@ function updateUI() {
   rateValueEl.textContent = arrow + '₦' + rate.toLocaleString('en-US');
   rateValueEl.className = 'rate-value ' + dir;
 
-  // FIX #3: properly handle change24h display
   if (change24h !== 0) {
     changeBadge.style.display = 'inline';
     changeBadge.textContent = (change24h > 0 ? '+' : '') + change24h + '%';
@@ -338,7 +351,7 @@ function updateUI() {
   updateConversion();
 }
 
-// ═══ CONVERSION (FIX #4: 0 displays as "0" not "0.00000000") ═══
+// ═══ CONVERSION ═══
 function updateConversion() {
   var n = parseFloat(amount) || 0;
   if (!rate) return;
@@ -373,7 +386,7 @@ function updateConversion() {
   }
 }
 
-// ═══ FIELD TAP ═══
+// ═══ INTERACTIONS ═══
 function handleFieldTap(f) {
   if (direction === f) return;
   direction = f;
@@ -383,7 +396,6 @@ function handleFieldTap(f) {
   updateConversion();
 }
 
-// ═══ NUMPAD INPUT ═══
 function handleKey(k) {
   if (k === 'C') { amount = '0'; updateConversion(); return; }
   if (k === '.' && amount.indexOf('.') !== -1) return;
@@ -392,7 +404,6 @@ function handleKey(k) {
   updateConversion();
 }
 
-// ═══ SWAP ═══
 function handleSwap() {
   direction = direction === 'btc' ? 'ngn' : 'btc';
   amount = '0';
@@ -401,11 +412,9 @@ function handleSwap() {
   updateConversion();
 }
 
-// ═══ EVENT LISTENERS (FIX: numpad not clickable) ═══
-// Use event delegation on numpad for both touch and click
+// ═══ NUMPAD EVENTS (touch + click) ═══
 var numpad = document.getElementById('numpad');
 
-// Touch events for mobile (faster response, no 300ms delay)
 numpad.addEventListener('touchstart', function(e) {
   var btn = e.target.closest('.num-key');
   if (!btn) return;
@@ -420,7 +429,6 @@ numpad.addEventListener('touchend', function(e) {
   if (btn) btn.classList.remove('pressed');
 }, {passive: true});
 
-// Click events for desktop
 numpad.addEventListener('click', function(e) {
   var btn = e.target.closest('.num-key');
   if (!btn) return;
@@ -439,7 +447,7 @@ var swapBtn = document.getElementById('swapBtn');
 swapBtn.addEventListener('click', handleSwap);
 swapBtn.addEventListener('touchstart', function(e) { e.preventDefault(); handleSwap(); }, {passive: false});
 
-// ═══ KEYBOARD (FIX #6: only when body is focused, not in URL bar) ═══
+// ═══ KEYBOARD ═══
 document.addEventListener('keydown', function(e) {
   if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
   if (e.key >= '0' && e.key <= '9') handleKey(e.key);
@@ -452,18 +460,17 @@ document.addEventListener('keydown', function(e) {
   else if (e.key === 'Tab') { e.preventDefault(); handleSwap(); }
 });
 
-// ═══ POLLING WITH BACKOFF (FIX #5) ═══
+// ═══ INIT ═══
 fetchRate();
 setInterval(function() { fetchRate(); }, 15000);
 
-// ═══ SERVICE WORKER (v3 to bust old caches) ═══
+// ═══ SERVICE WORKER ═══
 if ('serviceWorker' in navigator) {
   navigator.serviceWorker.getRegistrations().then(function(registrations) {
     for (var i = 0; i < registrations.length; i++) {
       registrations[i].unregister();
     }
   });
-  // Re-register with new version
   setTimeout(function() {
     navigator.serviceWorker.register('/sw.js').catch(function(){});
   }, 2000);
