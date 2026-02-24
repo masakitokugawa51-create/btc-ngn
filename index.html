@@ -19,20 +19,18 @@
   <meta property="og:description" content="Convert Bitcoin to Nigerian Naira instantly with live rates. Free, fast, no signup required.">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://btc-ngn.vercel.app/">
-  <meta property="og:image" content="https://btc-ngn.vercel.app/og-image.png">
   
   <!-- PWA -->
   <link rel="manifest" href="/manifest.json">
   <link rel="icon" type="image/png" sizes="192x192" href="/icon-192.png">
   <link rel="apple-touch-icon" href="/icon-192.png">
   
-  <!-- Preconnect -->
   <link rel="preconnect" href="https://api.coingecko.com">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
   
-  <!-- AdSense placeholder - replace with your actual AdSense code -->
+  <!-- AdSense - REPLACE ca-pub-XXXXXXXXXXXXXXXX with your actual publisher ID after approval -->
   <!-- <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXXXXXXXX" crossorigin="anonymous"></script> -->
 
   <style>
@@ -41,7 +39,6 @@
       --surface: #1A1A1E;
       --surface-active: #222226;
       --border: #2A2A2E;
-      --border-active: #3A3A3E;
       --text: #FAFAFA;
       --text-dim: #888892;
       --text-muted: #555560;
@@ -58,389 +55,92 @@
       --safe-top: env(safe-area-inset-top, 0px);
       --safe-bottom: env(safe-area-inset-bottom, 0px);
     }
-
     * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-    
     html, body {
-      height: 100%;
-      overflow: hidden;
-      background: var(--bg);
-      color: var(--text);
+      height: 100%; overflow: hidden; background: var(--bg); color: var(--text);
       font-family: 'DM Sans', -apple-system, sans-serif;
-      -webkit-font-smoothing: antialiased;
-      user-select: none;
-      -webkit-user-select: none;
+      -webkit-font-smoothing: antialiased; user-select: none; -webkit-user-select: none;
     }
-
     .app {
-      display: flex;
-      flex-direction: column;
-      height: 100%;
-      max-width: 480px;
-      margin: 0 auto;
-      padding-top: max(8px, var(--safe-top));
-      padding-bottom: max(8px, var(--safe-bottom));
-      padding-left: 16px;
-      padding-right: 16px;
+      display: flex; flex-direction: column; height: 100%; max-width: 480px; margin: 0 auto;
+      padding: max(8px, var(--safe-top)) 16px max(8px, var(--safe-bottom));
     }
-
-    /* --- Premium Banner --- */
-    .premium-banner {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      padding: 8px 18px;
-      margin: 4px auto 0;
-      background: var(--accent-glow);
-      border: 1px solid var(--accent-border);
-      border-radius: 20px;
-      cursor: pointer;
-      transition: transform 0.15s, background 0.2s;
+    .ad-slot {
+      min-height: 50px; margin: 4px 0; display: flex; align-items: center; justify-content: center;
+      background: var(--surface); border-radius: 10px; border: 1px solid var(--border);
+      color: var(--text-muted); font-size: 11px; flex-shrink: 0; overflow: hidden;
     }
-    .premium-banner:active { transform: scale(0.96); }
-    .premium-banner span { font-size: 13px; font-weight: 600; color: var(--accent); }
-
-    /* --- Rate Bar --- */
-    .rate-bar {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      padding: 10px 0;
-    }
+    .rate-bar { display: flex; align-items: center; justify-content: center; gap: 8px; padding: 10px 0; }
     .rate-label { color: var(--text-dim); font-size: 12px; }
-    .rate-value {
-      font-size: 14px;
-      font-weight: 700;
-      font-family: 'Space Mono', monospace;
-      transition: color 0.3s;
-    }
+    .rate-value { font-size: 14px; font-weight: 700; font-family: 'Space Mono', monospace; transition: color 0.3s; }
     .rate-value.up { color: var(--green); }
     .rate-value.down { color: var(--red); }
-    .change-badge {
-      font-size: 11px;
-      font-weight: 600;
-      padding: 2px 6px;
-      border-radius: 6px;
-    }
+    .change-badge { font-size: 11px; font-weight: 600; padding: 2px 6px; border-radius: 6px; }
     .change-badge.positive { color: var(--green); background: var(--green-dim); }
     .change-badge.negative { color: var(--red); background: var(--red-dim); }
-
-    /* --- Currency Fields --- */
     .fields-wrapper { position: relative; }
-    
     .field {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 18px 16px;
-      border-radius: 16px;
-      border: 2px solid var(--border);
-      background: var(--surface);
-      cursor: pointer;
-      transition: border-color 0.2s, background 0.2s, transform 0.1s;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 18px 16px; border-radius: 16px; border: 2px solid var(--border);
+      background: var(--surface); cursor: pointer; transition: all 0.2s;
     }
     .field:active { transform: scale(0.98); }
-    .field.active-btc {
-      border-color: var(--accent-border);
-      background: var(--accent-glow);
-    }
-    .field.active-ngn {
-      border-color: var(--ng-green-border);
-      background: var(--ng-green-glow);
-    }
+    .field.active-btc { border-color: var(--accent-border); background: var(--accent-glow); }
+    .field.active-ngn { border-color: var(--ng-green-border); background: var(--ng-green-glow); }
     .field + .field { margin-top: 10px; }
-
     .field-left { display: flex; align-items: center; }
-    
     .currency-icon {
-      width: 38px;
-      height: 38px;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 20px;
-      font-weight: 700;
-      flex-shrink: 0;
+      width: 38px; height: 38px; border-radius: 50%; display: flex;
+      align-items: center; justify-content: center; font-size: 20px; font-weight: 700; flex-shrink: 0;
     }
     .currency-icon.btc { background: #F7931A; color: #fff; font-family: 'Space Mono', monospace; }
-    .currency-icon.ngn { background: var(--ng-green); font-size: 20px; }
-
-    .currency-label {
-      margin-left: 10px;
-      font-size: 16px;
-      font-weight: 600;
-    }
-
+    .currency-icon.ngn { background: var(--ng-green); }
+    .currency-label { margin-left: 10px; font-size: 16px; font-weight: 600; }
     .field-value {
-      font-size: 28px;
-      font-weight: 600;
-      font-family: 'Space Mono', monospace;
-      text-align: right;
-      flex: 1;
-      margin-left: 12px;
-      overflow: hidden;
-      white-space: nowrap;
-      transition: color 0.2s;
+      font-size: 28px; font-weight: 600; font-family: 'Space Mono', monospace;
+      text-align: right; flex: 1; margin-left: 12px; overflow: hidden; white-space: nowrap;
     }
     .field-value.dim { color: var(--text-dim); }
     .field-value.small { font-size: 20px; }
-
-    /* --- Swap Button --- */
     .swap-btn {
-      position: absolute;
-      right: 12px;
-      top: 50%;
-      transform: translateY(-50%);
-      z-index: 10;
-      width: 44px;
-      height: 44px;
-      border-radius: 12px;
-      background: var(--surface);
-      border: 2px solid var(--border);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.4);
-      transition: transform 0.15s;
-      font-size: 20px;
-      font-weight: 700;
-      color: var(--text);
+      position: absolute; right: 12px; top: 50%; transform: translateY(-50%); z-index: 10;
+      width: 44px; height: 44px; border-radius: 12px; background: var(--surface);
+      border: 2px solid var(--border); display: flex; align-items: center; justify-content: center;
+      cursor: pointer; box-shadow: 0 4px 12px rgba(0,0,0,0.4); font-size: 20px; font-weight: 700; color: var(--text);
     }
     .swap-btn:active { transform: translateY(-50%) scale(0.9); }
-
-    /* --- Ad Banner Slot --- */
-    .ad-slot {
-      min-height: 50px;
-      margin: 8px 0;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background: var(--surface);
-      border-radius: 8px;
-      border: 1px dashed var(--border);
-      color: var(--text-muted);
-      font-size: 11px;
-      flex-shrink: 0;
-    }
-
-    /* --- Numpad --- */
     .numpad {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-      padding: 12px 0;
-      justify-content: center;
-      min-height: 0;
+      flex: 1; display: flex; flex-direction: column; gap: 10px;
+      padding: 8px 0; justify-content: center; min-height: 0;
     }
-    .numpad-row {
-      display: flex;
-      gap: 10px;
-    }
+    .numpad-row { display: flex; gap: 10px; }
     .num-key {
-      flex: 1;
-      height: 58px;
-      border-radius: 14px;
-      background: var(--surface);
-      border: none;
-      color: var(--text);
-      font-size: 24px;
-      font-weight: 500;
-      font-family: 'DM Sans', sans-serif;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: background 0.1s, transform 0.1s;
-      -webkit-tap-highlight-color: transparent;
+      flex: 1; height: 58px; border-radius: 14px; background: var(--surface); border: none;
+      color: var(--text); font-size: 24px; font-weight: 500; font-family: 'DM Sans', sans-serif;
+      cursor: pointer; display: flex; align-items: center; justify-content: center;
     }
-    .num-key:active {
-      background: var(--surface-active);
-      transform: scale(0.95);
-    }
-    .num-key.clear {
-      background: var(--red-dim);
-      color: var(--red);
-    }
-    .num-key.clear:active { background: rgba(255, 59, 48, 0.2); }
-
-    /* --- Footer --- */
-    .footer {
-      text-align: center;
-      padding: 4px 0 2px;
-      flex-shrink: 0;
-    }
-    .footer-row {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 4px;
-    }
+    .num-key:active { background: var(--surface-active); transform: scale(0.95); }
+    .num-key.clear { background: var(--red-dim); color: var(--red); }
+    .footer { text-align: center; padding: 4px 0 2px; flex-shrink: 0; }
+    .footer-row { display: flex; align-items: center; justify-content: center; gap: 4px; }
     .footer-text { color: var(--text-muted); font-size: 12px; }
-    .footer-cta {
-      color: var(--accent);
-      font-size: 12px;
-      font-weight: 500;
-      cursor: pointer;
-      margin-top: 2px;
-    }
-
-    /* --- Paywall Overlay --- */
-    .paywall-overlay {
-      display: none;
-      position: fixed;
-      inset: 0;
-      z-index: 100;
-      background: var(--bg);
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      padding: 32px 24px;
-    }
-    .paywall-overlay.open { display: flex; }
-    
-    .paywall-close {
-      position: absolute;
-      top: max(16px, var(--safe-top));
-      right: 16px;
-      width: 36px;
-      height: 36px;
-      border-radius: 50%;
-      background: var(--surface);
-      border: none;
-      color: var(--text-dim);
-      font-size: 20px;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .paywall-gift { font-size: 64px; margin-bottom: 16px; }
-    .paywall-title { font-size: 28px; font-weight: 700; margin-bottom: 24px; }
-    
-    .paywall-feature {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      font-size: 15px;
-      padding: 8px 0;
-      width: 100%;
-      max-width: 300px;
-    }
-    .paywall-feature .icon { font-size: 24px; flex-shrink: 0; }
-
-    .paywall-plans { width: 100%; max-width: 340px; margin-top: 28px; }
-    
-    .plan-card {
-      padding: 16px;
-      border-radius: 14px;
-      background: var(--surface);
-      border: 2px solid var(--border);
-      margin-bottom: 12px;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      transition: border-color 0.2s;
-    }
-    .plan-card.selected {
-      border-color: var(--accent);
-      background: var(--accent-glow);
-    }
-    .plan-name { font-weight: 700; font-size: 15px; }
-    .plan-price { color: var(--text-dim); font-size: 13px; margin-top: 2px; }
-    .plan-price .old { text-decoration: line-through; color: var(--text-muted); margin-right: 4px; }
-    .plan-badge {
-      background: var(--red);
-      color: #fff;
-      font-size: 11px;
-      font-weight: 700;
-      padding: 3px 8px;
-      border-radius: 6px;
-    }
-    .plan-check {
-      width: 28px;
-      height: 28px;
-      border-radius: 50%;
-      background: var(--accent);
-      color: #fff;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 16px;
-      font-weight: 700;
-    }
-
-    .paywall-cta {
-      width: 100%;
-      max-width: 340px;
-      padding: 16px;
-      border-radius: 14px;
-      background: var(--accent);
-      border: none;
-      color: #fff;
-      font-size: 18px;
-      font-weight: 700;
-      cursor: pointer;
-      margin-top: 16px;
-      transition: transform 0.15s;
-      font-family: 'DM Sans', sans-serif;
-    }
-    .paywall-cta:active { transform: scale(0.97); }
-
-    .paywall-links {
-      display: flex;
-      gap: 16px;
-      margin-top: 12px;
-      font-size: 12px;
-    }
-    .paywall-links a { color: var(--text-dim); text-decoration: underline; }
-    .paywall-disclaimer {
-      color: var(--text-muted);
-      font-size: 10px;
-      text-align: center;
-      margin-top: 8px;
-      max-width: 300px;
-      line-height: 1.4;
-    }
-
-    /* --- SEO Content (hidden visually, visible to crawlers) --- */
-    .seo-content {
-      position: absolute;
-      left: -9999px;
-      width: 1px;
-      height: 1px;
-      overflow: hidden;
-    }
-
-    /* Responsive */
+    .seo-content { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
     @media (max-height: 700px) {
       .num-key { height: 48px; font-size: 20px; }
-      .numpad { gap: 6px; padding: 6px 0; }
+      .numpad { gap: 6px; }
       .field { padding: 14px 16px; }
       .field-value { font-size: 24px; }
-      .ad-slot { min-height: 40px; }
     }
     @media (max-height: 600px) {
       .num-key { height: 40px; font-size: 18px; }
-      .premium-banner { padding: 5px 14px; margin-top: 2px; }
-      .rate-bar { padding: 5px 0; }
+      .ad-slot:last-of-type { display: none; }
     }
   </style>
 </head>
 <body>
-
-<div class="app" id="app">
-  <!-- Premium Banner -->
-  <div class="premium-banner" onclick="openPaywall()">
-    <span>🎁</span>
-    <span>Unlock Premium</span>
-  </div>
+<div class="app">
+  <!-- Top Ad -->
+  <div class="ad-slot" id="adTop"><span>Ad</span></div>
 
   <!-- Rate Bar -->
   <div class="rate-bar">
@@ -449,7 +149,7 @@
     <span class="change-badge" id="changeBadge" style="display:none"></span>
   </div>
 
-  <!-- Currency Fields -->
+  <!-- Fields -->
   <div class="fields-wrapper">
     <div class="field active-btc" id="btcField" onclick="handleFieldTap('btc')">
       <div class="field-left">
@@ -458,9 +158,7 @@
       </div>
       <span class="field-value" id="btcValue">0</span>
     </div>
-
     <div class="swap-btn" onclick="handleSwap()">⇅</div>
-
     <div class="field" id="ngnField" onclick="handleFieldTap('ngn')">
       <div class="field-left">
         <div class="currency-icon ngn">🇳🇬</div>
@@ -470,11 +168,8 @@
     </div>
   </div>
 
-  <!-- Ad Slot -->
-  <div class="ad-slot" id="adSlot">
-    <!-- AdSense ad unit goes here -->
-    Ad Space
-  </div>
+  <!-- Mid Ad -->
+  <div class="ad-slot" id="adMid"><span>Ad</span></div>
 
   <!-- Numpad -->
   <div class="numpad">
@@ -506,274 +201,81 @@
       <span style="font-size:11px">🔄</span>
       <span class="footer-text" id="footerText">Last updated --:--</span>
     </div>
-    <div class="footer-cta" onclick="openPaywall()">Unlock premium for live exchange rates</div>
   </div>
 </div>
 
-<!-- Paywall Overlay -->
-<div class="paywall-overlay" id="paywall">
-  <button class="paywall-close" onclick="closePaywall()">✕</button>
-  <div class="paywall-gift">🎁</div>
-  <div class="paywall-title">Unlock Premium</div>
-  
-  <div class="paywall-feature"><span class="icon">💰</span> Instantly convert BTC/NGN</div>
-  <div class="paywall-feature"><span class="icon">📡</span> No internet connection required</div>
-  <div class="paywall-feature"><span class="icon">⚡</span> Live conversion rates</div>
-  <div class="paywall-feature"><span class="icon">🚫</span> Remove annoying purchase screens</div>
-
-  <div class="paywall-plans">
-    <div class="plan-card" id="yearlyPlan" onclick="selectPlan('yearly')">
-      <div>
-        <div class="plan-name">Yearly Plan</div>
-        <div class="plan-price"><span class="old">$59.99</span> $4.99/yr</div>
-      </div>
-      <span class="plan-badge">SAVE 93%</span>
-    </div>
-    <div class="plan-card selected" id="weeklyPlan" onclick="selectPlan('weekly')">
-      <div>
-        <div class="plan-name">3-Day Trial</div>
-        <div class="plan-price">then $4.99 per week</div>
-      </div>
-      <div class="plan-check">✓</div>
-    </div>
-  </div>
-
-  <button class="paywall-cta" onclick="handlePurchase()">Try for Free →</button>
-
-  <div class="paywall-links">
-    <a href="#">Restore</a>
-    <a href="#">Terms of Use & Privacy Policy</a>
-  </div>
-  <div class="paywall-disclaimer">
-    Payment will be charged to your account. Subscription automatically renews unless cancelled at least 24 hours before the end of the current period.
-  </div>
-</div>
-
-<!-- SEO Content for crawlers -->
+<!-- SEO -->
 <div class="seo-content">
   <h1>Bitcoin to Naira Converter - BTC to NGN Calculator</h1>
-  <h2>Free Bitcoin to Nigerian Naira Exchange Rate Calculator</h2>
-  <p>Convert Bitcoin (BTC) to Nigerian Naira (NGN) with our free online calculator. Get live exchange rates updated every 15 seconds. The most trusted Bitcoin to Naira converter in Nigeria.</p>
+  <p>Convert Bitcoin to Nigerian Naira instantly. Free BTC to NGN calculator with live rates updated every 15 seconds.</p>
   <h2>How to Convert Bitcoin to Naira</h2>
-  <p>Simply enter the amount of BTC or NGN you want to convert. Our calculator uses live market data from CoinGecko to give you the most accurate Bitcoin to Naira exchange rate.</p>
-  <h2>Current BTC to NGN Rate</h2>
-  <p>Check the current Bitcoin price in Nigerian Naira. Our rates are updated in real-time using data from major cryptocurrency exchanges.</p>
-  <h3>Why use our Bitcoin to Naira converter?</h3>
-  <p>Free to use, no registration required. Live rates from CoinGecko API. Works offline. Available as a Progressive Web App you can install on your phone.</p>
+  <p>Enter the amount of BTC or NGN to convert. Live market data from CoinGecko gives the most accurate Bitcoin to Naira exchange rate.</p>
 </div>
 
-<!-- Structured Data for Rich Snippets -->
 <script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "WebApplication",
-  "name": "Bitcoin to Naira Converter",
-  "alternateName": "BTC to NGN Calculator",
-  "description": "Convert Bitcoin to Nigerian Naira instantly with live exchange rates. Free, fast, no signup required.",
-  "applicationCategory": "FinanceApplication",
-  "operatingSystem": "Any",
-  "offers": {
-    "@type": "Offer",
-    "price": "0",
-    "priceCurrency": "USD"
-  },
-  "aggregateRating": {
-    "@type": "AggregateRating",
-    "ratingValue": "4.8",
-    "ratingCount": "1200"
-  }
-}
+{"@context":"https://schema.org","@type":"WebApplication","name":"Bitcoin to Naira Converter","description":"Convert Bitcoin to Nigerian Naira instantly with live exchange rates.","applicationCategory":"FinanceApplication","operatingSystem":"Any","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}}
 </script>
 
 <script>
-  // ═══ STATE ═══
-  let amount = '0';
-  let direction = 'btc'; // 'btc' = typing BTC, 'ngn' = typing NGN
-  let rate = 0;
-  let prevRate = 0;
-  let change24h = 0;
-  let lastUpdated = null;
-  let selectedPlan = 'weekly';
-  let tapCount = 0;
+let amount='0',direction='btc',rate=0,prevRate=0,change24h=0,lastUpdated=null;
+const btcField=document.getElementById('btcField'),ngnField=document.getElementById('ngnField'),
+btcValue=document.getElementById('btcValue'),ngnValue=document.getElementById('ngnValue'),
+rateValueEl=document.getElementById('rateValue'),changeBadge=document.getElementById('changeBadge'),
+footerText=document.getElementById('footerText');
 
-  // ═══ DOM REFS ═══
-  const btcField = document.getElementById('btcField');
-  const ngnField = document.getElementById('ngnField');
-  const btcValue = document.getElementById('btcValue');
-  const ngnValue = document.getElementById('ngnValue');
-  const rateValueEl = document.getElementById('rateValue');
-  const changeBadge = document.getElementById('changeBadge');
-  const footerText = document.getElementById('footerText');
-  const paywall = document.getElementById('paywall');
-
-  // ═══ FETCH RATE ═══
-  async function fetchRate() {
-    try {
-      const url = 'https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=ngn&include_24hr_change=true&include_last_updated_at=true';
-      const res = await fetch(url);
-      if (!res.ok) throw new Error('API error');
-      const json = await res.json();
-      const data = json.bitcoin;
-
-      if (rate !== 0) prevRate = rate;
-      rate = data.ngn;
-      change24h = Math.round((data.ngn_24h_change || 0) * 100) / 100;
-      lastUpdated = new Date(data.last_updated_at * 1000);
-
-      // Save to localStorage for offline
-      localStorage.setItem('btc_ngn_rate', JSON.stringify({ rate, change24h, ts: Date.now() }));
-
-      updateRateDisplay();
-      updateConversion();
-    } catch (e) {
-      // Try cached rate
-      const cached = localStorage.getItem('btc_ngn_rate');
-      if (cached) {
-        const data = JSON.parse(cached);
-        rate = data.rate;
-        change24h = data.change24h;
-        lastUpdated = new Date(data.ts);
-        updateRateDisplay();
-        updateConversion();
-      }
-    }
+async function fetchRate(){
+  try{
+    const r=await fetch('https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=ngn&include_24hr_change=true&include_last_updated_at=true');
+    if(!r.ok)throw 0;const j=await r.json(),d=j.bitcoin;
+    if(rate)prevRate=rate;rate=d.ngn;change24h=Math.round((d.ngn_24h_change||0)*100)/100;
+    lastUpdated=new Date(d.last_updated_at*1000);
+    localStorage.setItem('btc_ngn',JSON.stringify({rate,change24h,ts:Date.now()}));
+    updateUI();
+  }catch(e){
+    const c=localStorage.getItem('btc_ngn');
+    if(c){const d=JSON.parse(c);rate=d.rate;change24h=d.change24h;lastUpdated=new Date(d.ts);updateUI();}
   }
-
-  function updateRateDisplay() {
-    const dir = rate > prevRate ? 'up' : rate < prevRate ? 'down' : '';
-    const arrow = dir === 'up' ? '▲ ' : dir === 'down' ? '▼ ' : '';
-    
-    rateValueEl.textContent = arrow + '₦' + rate.toLocaleString('en-US');
-    rateValueEl.className = 'rate-value ' + dir;
-
-    if (change24h !== 0) {
-      changeBadge.style.display = 'inline';
-      changeBadge.textContent = (change24h > 0 ? '+' : '') + change24h + '%';
-      changeBadge.className = 'change-badge ' + (change24h > 0 ? 'positive' : 'negative');
-    }
-
-    if (lastUpdated) {
-      footerText.textContent = 'Last updated ' + lastUpdated.toLocaleTimeString('en-US', {
-        hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false
-      });
-    }
+}
+function updateUI(){
+  const dir=rate>prevRate?'up':rate<prevRate?'down':'';
+  rateValueEl.textContent=(dir==='up'?'▲ ':dir==='down'?'▼ ':'')+'₦'+rate.toLocaleString('en-US');
+  rateValueEl.className='rate-value '+dir;
+  if(change24h){changeBadge.style.display='inline';changeBadge.textContent=(change24h>0?'+':'')+change24h+'%';
+  changeBadge.className='change-badge '+(change24h>0?'positive':'negative');}
+  if(lastUpdated)footerText.textContent='Last updated '+lastUpdated.toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:false});
+  updateConversion();
+}
+function updateConversion(){
+  const n=parseFloat(amount)||0;if(!rate)return;
+  if(direction==='btc'){
+    btcValue.textContent=amount;btcValue.className='field-value'+(amount.length>12?' small':'');
+    const r=n*rate;let d;if(r>=1e9)d=(r/1e9).toFixed(2)+'B';else if(r>=1e6)d=(r/1e6).toFixed(2)+'M';
+    else d=r.toLocaleString('en-US',{maximumFractionDigits:0});
+    ngnValue.textContent=d;ngnValue.className='field-value dim'+(d.length>12?' small':'');
+  }else{
+    ngnValue.textContent=amount;ngnValue.className='field-value'+(amount.length>12?' small':'');
+    const r=n/rate,d=r.toFixed(8);
+    btcValue.textContent=d;btcValue.className='field-value dim'+(d.length>12?' small':'');
   }
-
-  // ═══ CONVERSION ═══
-  function updateConversion() {
-    const num = parseFloat(amount) || 0;
-    if (rate === 0) return;
-
-    if (direction === 'btc') {
-      btcValue.textContent = amount;
-      btcValue.className = 'field-value';
-      
-      const result = num * rate;
-      let display;
-      if (result >= 1e9) display = (result / 1e9).toFixed(2) + 'B';
-      else if (result >= 1e6) display = (result / 1e6).toFixed(2) + 'M';
-      else display = result.toLocaleString('en-US', { maximumFractionDigits: 0 });
-      
-      ngnValue.textContent = display;
-      ngnValue.className = 'field-value dim' + (display.length > 12 ? ' small' : '');
-      btcValue.className = 'field-value' + (amount.length > 12 ? ' small' : '');
-    } else {
-      ngnValue.textContent = amount;
-      ngnValue.className = 'field-value';
-      
-      const result = num / rate;
-      const display = result.toFixed(8);
-      
-      btcValue.textContent = display;
-      btcValue.className = 'field-value dim' + (display.length > 12 ? ' small' : '');
-      ngnValue.className = 'field-value' + (amount.length > 12 ? ' small' : '');
-    }
-  }
-
-  // ═══ FIELD TAP ═══
-  function handleFieldTap(field) {
-    if (direction === field) return;
-    
-    tapCount++;
-    
-    direction = field;
-    amount = '0';
-
-    btcField.className = field === 'btc' ? 'field active-btc' : 'field';
-    ngnField.className = field === 'ngn' ? 'field active-ngn' : 'field';
-
-    updateConversion();
-  }
-
-  // ═══ NUMPAD ═══
-  function handleKey(key) {
-    if (key === 'C') {
-      amount = '0';
-      updateConversion();
-      return;
-    }
-    if (key === '.' && amount.includes('.')) return;
-
-    if (amount === '0' && key !== '.') {
-      amount = key;
-    } else if (amount.length < 15) {
-      amount += key;
-    }
-    updateConversion();
-  }
-
-  // ═══ SWAP ═══
-  function handleSwap() {
-    direction = direction === 'btc' ? 'ngn' : 'btc';
-    amount = '0';
-
-    btcField.className = direction === 'btc' ? 'field active-btc' : 'field';
-    ngnField.className = direction === 'ngn' ? 'field active-ngn' : 'field';
-
-    updateConversion();
-  }
-
-  // ═══ PAYWALL ═══
-  function openPaywall() { paywall.classList.add('open'); }
-  function closePaywall() { paywall.classList.remove('open'); }
-  
-  function selectPlan(plan) {
-    selectedPlan = plan;
-    document.getElementById('weeklyPlan').classList.toggle('selected', plan === 'weekly');
-    document.getElementById('yearlyPlan').classList.toggle('selected', plan === 'yearly');
-  }
-
-  function handlePurchase() {
-    // TODO: Integrate Stripe or payment gateway
-    alert('Payment integration coming soon! For now, enjoy the free version.');
-    closePaywall();
-  }
-
-  // ═══ KEYBOARD SUPPORT ═══
-  document.addEventListener('keydown', (e) => {
-    if (paywall.classList.contains('open')) {
-      if (e.key === 'Escape') closePaywall();
-      return;
-    }
-    if (e.key >= '0' && e.key <= '9') handleKey(e.key);
-    else if (e.key === '.') handleKey('.');
-    else if (e.key === 'Backspace') {
-      amount = amount.length <= 1 ? '0' : amount.slice(0, -1);
-      updateConversion();
-    }
-    else if (e.key === 'c' || e.key === 'C') handleKey('C');
-    else if (e.key === 'Tab') { e.preventDefault(); handleSwap(); }
-  });
-
-  // ═══ INIT ═══
-  fetchRate();
-  setInterval(fetchRate, 15000); // Update every 15 seconds
-
-  // ═══ SERVICE WORKER ═══
-  if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('/sw.js').catch(() => {});
-  }
+}
+function handleFieldTap(f){if(direction===f)return;direction=f;amount='0';
+  btcField.className=f==='btc'?'field active-btc':'field';
+  ngnField.className=f==='ngn'?'field active-ngn':'field';updateConversion();}
+function handleKey(k){if(k==='C'){amount='0';updateConversion();return;}
+  if(k==='.'&&amount.includes('.'))return;
+  if(amount==='0'&&k!=='.')amount=k;else if(amount.length<15)amount+=k;updateConversion();}
+function handleSwap(){direction=direction==='btc'?'ngn':'btc';amount='0';
+  btcField.className=direction==='btc'?'field active-btc':'field';
+  ngnField.className=direction==='ngn'?'field active-ngn':'field';updateConversion();}
+document.addEventListener('keydown',e=>{
+  if(e.key>='0'&&e.key<='9')handleKey(e.key);
+  else if(e.key==='.')handleKey('.');
+  else if(e.key==='Backspace'){amount=amount.length<=1?'0':amount.slice(0,-1);updateConversion();}
+  else if(e.key==='c'||e.key==='C')handleKey('C');
+  else if(e.key==='Tab'){e.preventDefault();handleSwap();}
+});
+fetchRate();setInterval(fetchRate,15000);
+if('serviceWorker'in navigator)navigator.serviceWorker.register('/sw.js').catch(()=>{});
 </script>
-
 </body>
 </html>
