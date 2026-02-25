@@ -40,9 +40,31 @@
       try {
         var ins = document.querySelectorAll('ins.adsbygoogle');
         for (var i = 0; i < ins.length; i++) {
+          if (ins[i].dataset.pushed === '1') continue;
+          ins[i].dataset.pushed = '1';
           (adsbygoogle = window.adsbygoogle || []).push({});
         }
       } catch (e) {}
+      requestAnimationFrame(revealIfFilled);
+      setTimeout(revealIfFilled, 800);
+      setTimeout(revealIfFilled, 2000);
+      setTimeout(revealIfFilled, 6000);
+    }
+
+    function revealIfFilled() {
+      try {
+        var slots = [
+          {wrap: document.getElementById('adTop'), ins: document.querySelector('#adTop ins.adsbygoogle')},
+          {wrap: document.getElementById('adMid'), ins: document.querySelector('#adMid ins.adsbygoogle')}
+        ];
+        for (var i = 0; i < slots.length; i++) {
+          var w = slots[i].wrap, el = slots[i].ins;
+          if (!w || !el) continue;
+          if (el.getAttribute('data-ad-status') === 'filled' || el.querySelector('iframe')) {
+            w.classList.add('show');
+          }
+        }
+      } catch(e) {}
     }
 
     if (window.__ADS_ENABLED__) {
@@ -99,10 +121,12 @@
       padding: max(8px, var(--safe-top)) 16px max(8px, var(--safe-bottom));
     }
     .ad-slot {
-      min-height: 50px; margin: 4px 0; display: flex; align-items: center; justify-content: center;
-      background: var(--surface); border-radius: 10px; border: 1px solid var(--border);
-      color: var(--text-muted); font-size: 11px; flex-shrink: 0; overflow: hidden;
+      margin: 4px 0; align-items: center; justify-content: center;
+      border-radius: 10px; flex-shrink: 0; overflow: hidden;
     }
+    #adTop, #adMid { display: none; }
+    .ad-slot.show { display: flex; }
+    .ad-slot ins.adsbygoogle[data-ad-status="filled"] { min-height: 50px; }
     .rate-bar { display: flex; align-items: center; justify-content: center; gap: 8px; padding: 10px 0; }
     .rate-label { color: var(--text-dim); font-size: 12px; }
     .rate-value { font-size: 14px; font-weight: 700; font-family: 'Space Mono', monospace; transition: color 0.3s; }
