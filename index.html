@@ -179,15 +179,15 @@
   <div class="fields-wrapper">
     <div class="field active-btc" id="btcField" onclick="handleFieldTap('btc')">
       <div class="field-left">
-        <div class="currency-icon btc">\u20bf</div>
+        <div class="currency-icon btc">₿</div>
         <span class="currency-label">BTC</span>
       </div>
       <span class="field-value" id="btcValue">0</span>
     </div>
-    <div class="swap-btn" onclick="handleSwap()">\u21c5</div>
+    <div class="swap-btn" onclick="handleSwap()">⇅</div>
     <div class="field" id="ngnField" onclick="handleFieldTap('ngn')">
       <div class="field-left">
-        <div class="currency-icon ngn">\ud83c\uddf3\ud83c\uddec</div>
+        <div class="currency-icon ngn">🇳🇬</div>
         <span class="currency-label">NGN</span>
       </div>
       <span class="field-value dim" id="ngnValue">0</span>
@@ -238,7 +238,7 @@
   <!-- Footer -->
   <div class="footer">
     <div class="footer-row">
-      <span style="font-size:11px">\ud83d\udd04</span>
+      <span style="font-size:11px">🔄</span>
       <span class="footer-text" id="footerText">Last updated --:--</span>
     </div>
   </div>
@@ -278,7 +278,7 @@ async function fetchRate(){
 }
 function updateUI(){
   const dir=rate>prevRate?'up':rate<prevRate?'down':'';
-  rateValueEl.textContent=(dir==='up'?'\u25b2 ':dir==='down'?'\u25bc ':'')+'\u20a6'+rate.toLocaleString('en-US');
+  rateValueEl.textContent=(dir==='up'?'▲ ':dir==='down'?'▼ ':'')+'₦'+rate.toLocaleString('en-US');
   rateValueEl.className='rate-value '+dir;
   if(change24h){changeBadge.style.display='inline';changeBadge.textContent=(change24h>0?'+':'')+change24h+'%';
   changeBadge.className='change-badge '+(change24h>0?'positive':'negative');}
